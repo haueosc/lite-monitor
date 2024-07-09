@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/Doge2077/lite-monitor">
-    <img src="https://image.itbaima.cn/images/40/image-2024042216963953.png" width="450"></a>
+    <img src="lite-monitor-web\src\assets\logo\lite-monitor-nobg.png" width="450"></a>
 </p>
 <p align="center"> 
   <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Righteous&size=20&duration=3000&pause=1000&color=5CE1E6&center=true&vCenter=true&repeat=false&width=435&lines=Simple+Fast+Accurate+LowMemoryOccupying" alt="Typing SVG" /></a>

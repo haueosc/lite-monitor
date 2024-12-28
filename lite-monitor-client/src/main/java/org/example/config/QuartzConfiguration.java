@@ -14,7 +14,7 @@ public class QuartzConfiguration {
     }
 
     public Trigger cronTriggerFactoryBean() throws InterruptedException {
-        CronScheduleBuilder cron = CronScheduleBuilder.cronSchedule("*/1 * * * * ?");
+        CronScheduleBuilder cron = CronScheduleBuilder.cronSchedule("*/10 * * * * ?");
         return TriggerBuilder.newTrigger()
                 .withIdentity("monitor-runtime-trigger")
                 .withSchedule(cron)

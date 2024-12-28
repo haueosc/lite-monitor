@@ -84,8 +84,8 @@ public class MonitorUtils {
                 double networkDownload = networkIF.getBytesRecv();
                 double diskRead = osHardwareInfo.getDiskStores().stream().mapToLong(HWDiskStore::getReadBytes).sum();
                 double diskWrite = osHardwareInfo.getDiskStores().stream().mapToLong(HWDiskStore::getWriteBytes).sum();
-                // 时间段统计 1s 的数据量取平均值
-                Thread.sleep((long) STATISTIC_TIME * 1000);
+                // 时间段统计 0.5s 的数据量取平均值
+                Thread.sleep((long) STATISTIC_TIME * 500);
                 networkIF = this.getClientAddress(osHardwareInfo);
                 networkUpload = (networkIF.getBytesSent() - networkUpload) / STATISTIC_TIME;
                 networkDownload = (networkIF.getBytesRecv() - networkDownload) / STATISTIC_TIME;
@@ -114,7 +114,7 @@ public class MonitorUtils {
     private double getCpuUsage(CentralProcessor processor) {
         long[] prevTicks = processor.getSystemCpuLoadTicks();
         long[][] prevProcTicks = processor.getProcessorCpuLoadTicks();
-        Util.sleep(1000);
+        Util.sleep((long) (STATISTIC_TIME * 250L));
         long[] ticks = processor.getSystemCpuLoadTicks();
         long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
         long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];

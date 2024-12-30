@@ -64,6 +64,11 @@
 
 ****
 
+部署 Redis:
+
+- 设置端口 `6379`
+- 使用 `0` 号数据库
+
 部署 MySQL：
 
 - 设置用户 `root`，密码 `monitormysqlroot`

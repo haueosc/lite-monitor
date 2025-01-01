@@ -55,7 +55,7 @@ const store = useStore()
 const route = useRoute()
 const tabs = [
   {id: 1, name: '管理', route: 'manage'},
-  {id: 2, name: '报告', route: 'report'},
+  // {id: 2, name: '报告', route: 'report'},
   {id: 3, name: '安全', route: 'security'}
 ]
 const defaultIndex = () => {

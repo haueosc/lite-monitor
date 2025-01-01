@@ -28,11 +28,13 @@ const router = createRouter({
                     path: '',
                     name: 'manage',
                     component: () => import('@/views/main/Manage.vue')
-                }, {
-                    path: 'report',
-                    name: 'report',
-                    component: () => import('@/views/main/Report.vue')
-                }, {
+                },
+                // {
+                //     path: 'report',
+                //     name: 'report',
+                //     component: () => import('@/views/main/Report.vue')
+                // },
+                {
                     path: 'security',
                     name: 'security',
                     component: () => import('@/views/main/Security.vue')

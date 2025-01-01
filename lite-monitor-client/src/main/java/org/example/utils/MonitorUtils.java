@@ -114,7 +114,7 @@ public class MonitorUtils {
     private double getCpuUsage(CentralProcessor processor) {
         long[] prevTicks = processor.getSystemCpuLoadTicks();
         long[][] prevProcTicks = processor.getProcessorCpuLoadTicks();
-        Util.sleep((long) (STATISTIC_TIME * 250L));
+        Util.sleep((long) (STATISTIC_TIME * 500L));
         long[] ticks = processor.getSystemCpuLoadTicks();
         long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
         long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];

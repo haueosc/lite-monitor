@@ -34,14 +34,28 @@ public class ServerConfiguration {
 
     private ConnectionConfig getConfigurationByRegister() {
         Scanner scanner = new Scanner(System.in);
-        String serverAddress, token;
+        String serverAddress, token, cron;
         do {
             log.info("请输入服务端地址及其端口号（127.0.0.1:8080）：");
             serverAddress = "http://" +  scanner.nextLine();
             log.info("请输入服务端生成的注册 Token 密钥：");
             token = scanner.nextLine();
+            do {
+                log.info("请输入信息采集间隔（单位为秒，默认为 10）：");
+                cron = scanner.nextLine();
+                try {
+                    int cronValue = Integer.parseInt(cron);
+                    if (cronValue < 1 || cronValue > 59) {
+                        log.warn("采集间隔必须在1到59之间，请重新输入。");
+                        cron = null;
+                    }
+                } catch (NumberFormatException e) {
+                    log.warn("请输入有效的数字。");
+                    cron = null;
+                }
+            } while (cron == null);
         } while (!this.netUtils.registerToServer(serverAddress, token));
-        ConnectionConfig connectionConfig = new ConnectionConfig(serverAddress, token);
+        ConnectionConfig connectionConfig = new ConnectionConfig(serverAddress, token, Integer.parseInt(cron));
         this.saveConnectionConfigAsFile(connectionConfig);
         return connectionConfig;
     }

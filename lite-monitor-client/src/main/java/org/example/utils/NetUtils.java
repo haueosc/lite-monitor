@@ -69,7 +69,6 @@ public class NetUtils {
     private Response doPost(String url, Object data) {
         try {
             String rawData = JSONObject.from(data).toJSONString();
-            String token = this.serverConfiguration.getConfigurationFromFile().getToken();
             HttpRequest httpRequest = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(rawData))
                     .uri(new URI(this.serverConfiguration.getConfigurationFromFile().getServerAddress() + "/monitor" + url))
                     .header("Authorization", this.serverConfiguration.getConfigurationFromFile().getToken())

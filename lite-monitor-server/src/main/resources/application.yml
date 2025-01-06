@@ -1,3 +1,5 @@
 spring:
   profiles:
     active: '@environment@'
+  main:
+    allow-circular-references: true

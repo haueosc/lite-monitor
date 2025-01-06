@@ -21,4 +21,8 @@ public interface AccountService extends IService<Account>, UserDetailsService {
     void createSubAccount(CreateSubAccountVO createSubAccountVO);
     void deleteSubAccount(int uid);
     List<SubAccountVO> listSubAccount();
+    /**
+     * 根据 clientId 获取拥有该主机权限的管理员邮箱（包含admin）
+     */
+    List<String> getMailByClientId(int clientId);
 }

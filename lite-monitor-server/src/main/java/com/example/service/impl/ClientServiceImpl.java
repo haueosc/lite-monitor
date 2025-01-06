@@ -11,6 +11,7 @@ import com.example.mapper.ClientDetailMapper;
 import com.example.mapper.ClientMapper;
 import com.example.mapper.ClientSshMapper;
 import com.example.service.ClientService;
+import com.example.service.ReportService;
 import com.example.utils.InfluxDbUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -37,6 +38,9 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
 
     @Resource
     InfluxDbUtils influxDbUtils;
+
+    @Resource
+    private ReportService reportService;
 
     private String registerToken = this.generateNewToken();
 
@@ -101,6 +105,7 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
     public Boolean updateRuntimeDetail(RuntimeDetailVO runtimeDetailVO, Client client) {
         this.currentRuntime.put(client.getClientId(), runtimeDetailVO);
         this.influxDbUtils.updateRuntimeDetial(client.getClientId(), runtimeDetailVO);
+        reportService.autoReport(client, runtimeDetailVO);
         return true;
     }
 

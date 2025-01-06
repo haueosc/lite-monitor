@@ -1,6 +1,7 @@
 package com.example.service.impl;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Account;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 账户信息处理相关服务
@@ -89,12 +91,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             return null;
         }
     }
-
-    /**
-     * 邮件验证码注册账号操作，需要检查验证码是否正确以及邮箱、用户名是否存在重名
-     * @param info 注册基本信息
-     * @return 操作结果，null表示正常，否则为错误原因
-     */
 
     /**
      * 邮件验证码重置密码操作，需要检查验证码是否正确
@@ -180,6 +176,15 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
                     subAccountVO.setClientList(JSONArray.parse(account.getClients()));
                     return subAccountVO;
                 }).toList();
+    }
+
+    @Override
+    public List<String> getMailByClientId(int clientId) {
+        LambdaQueryWrapper<Account> wrapper = Wrappers.<Account>lambdaQuery()
+                .eq(Account::getRole, "admin")
+                .or()
+                .inSql(Account::getClients, "JSON_CONTAINS(clients, '" + clientId + "')");
+        return this.list(wrapper).stream().map(Account::getEmail).collect(Collectors.toList());
     }
 
     /**

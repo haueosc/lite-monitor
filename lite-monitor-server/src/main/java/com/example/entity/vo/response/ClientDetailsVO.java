@@ -16,4 +16,8 @@ public class ClientDetailsVO {
     Double osMemory;
     Integer cpuCores;
     Double diskMemory;
+    // 报警内存负载阈值
+    Double reportMemory;
+    // 报警Cpu负载阈值
+    Double reportCpuUsage;
 }

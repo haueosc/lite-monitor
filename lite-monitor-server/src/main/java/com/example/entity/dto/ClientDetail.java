@@ -28,4 +28,8 @@ public class ClientDetail {
     Double osMemory;
     // 磁盘容量
     Double diskMemory;
+    // 报警内存负载阈值
+    Double reportMemory;
+    // 报警Cpu负载阈值
+    Double reportCpuUsage;
 }

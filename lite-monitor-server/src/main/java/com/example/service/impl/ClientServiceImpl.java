@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.Client;
@@ -30,24 +31,20 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> implements ClientService {
 
-    @Resource
-    ClientDetailMapper clientDetailMapper;
-
-    @Resource
-    ClientSshMapper clientSshMapper;
-
-    @Resource
-    InfluxDbUtils influxDbUtils;
-
-    @Resource
-    private ReportService reportService;
-
-    private String registerToken = this.generateNewToken();
-
     // 本地 Client Id 缓存
     private final Map<Integer, Client> clientIdCache = new ConcurrentHashMap<>();
     // 本地 Client Token 缓存
     private final Map<String, Client> clientTokenCache = new ConcurrentHashMap<>();
+    private final Map<Integer, RuntimeDetailVO> currentRuntime = new ConcurrentHashMap<>();
+    @Resource
+    ClientDetailMapper clientDetailMapper;
+    @Resource
+    ClientSshMapper clientSshMapper;
+    @Resource
+    InfluxDbUtils influxDbUtils;
+    @Resource
+    private ReportService reportService;
+    private String registerToken = this.generateNewToken();
 
     @PostConstruct
     private void initClientCache() {
@@ -99,8 +96,6 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
         }
     }
 
-    private final Map<Integer, RuntimeDetailVO> currentRuntime = new ConcurrentHashMap<>();
-
     @Override
     public Boolean updateRuntimeDetail(RuntimeDetailVO runtimeDetailVO, Client client) {
         this.currentRuntime.put(client.getClientId(), runtimeDetailVO);
@@ -145,7 +140,7 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
 
     @Override
     public void renameNode(RenameNodeVO renameNodeVO) {
-        this.update(Wrappers.<Client>update().eq("client_id", renameNodeVO.getClientId()).set("node", renameNodeVO.getNode()).set("location",renameNodeVO.getLocation()));
+        this.update(Wrappers.<Client>update().eq("client_id", renameNodeVO.getClientId()).set("node", renameNodeVO.getNode()).set("location", renameNodeVO.getLocation()));
         this.initClientCache();
     }
 
@@ -181,7 +176,7 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
     @Override
     public void saveClientSshConnection(SshConnectionVO sshConnectionVO) {
         Client client = this.clientIdCache.get(sshConnectionVO.getClientId());
-        if (client == null) return ;
+        if (client == null) return;
         ClientSsh clientSsh = new ClientSsh();
         BeanUtils.copyProperties(sshConnectionVO, clientSsh);
         if (Objects.nonNull(this.clientSshMapper.selectById(client.getClientId()))) {
@@ -205,6 +200,15 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
         return sshSettingsVO;
     }
 
+    @Override
+    public void updateReport(ReportClientVO reportClientVO) {
+        LambdaUpdateWrapper<ClientDetail> updateWrapper = Wrappers.<ClientDetail>lambdaUpdate()
+                .eq(ClientDetail::getClientId, reportClientVO.getClientId())
+                .set(ClientDetail::getReportMemory, reportClientVO.getReportMemory())
+                .set(ClientDetail::getReportCpuUsage, reportClientVO.getReportCpuUsage());
+        clientDetailMapper.update(null, updateWrapper);
+    }
+
     private void updateCache(Client client) {
         this.clientIdCache.put(client.getClientId(), client);
         this.clientTokenCache.put(client.getClientToken(), client);
@@ -218,7 +222,7 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
         String TEMPLATE = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         SecureRandom secureRandom = new SecureRandom();
         StringBuilder token = new StringBuilder();
-        for (int i = 0; i < 24; i ++) {
+        for (int i = 0; i < 24; i++) {
             token.append(TEMPLATE.charAt(secureRandom.nextInt(TEMPLATE.length())));
         }
         log.info("生成 Token：{}", token);

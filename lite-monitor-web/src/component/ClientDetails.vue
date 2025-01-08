@@ -1,10 +1,10 @@
 <script setup>
-import {computed, reactive, watch} from "vue";
-import {get, post} from "@/net";
-import {copyId, fitByUnit, percentageToStatus, rename} from "@/tools";
-import {ElMessage, ElMessageBox} from "element-plus";
-import RuntimeHistory from "@/component/RuntimeHistory.vue";
-import {Connection, Delete} from "@element-plus/icons-vue";
+import { computed, reactive, watch } from 'vue'
+import { get, post } from '@/net'
+import { copyId, fitByUnit, percentageToStatus, rename, reportConfig } from '@/tools'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import RuntimeHistory from '@/component/RuntimeHistory.vue'
+import { Connection, Delete } from '@element-plus/icons-vue'
 
 const locations = [
   {name: 'cn', desc: '中国大陆'},
@@ -48,7 +48,7 @@ const submitNodeEdit = () => {
     clientId: props.clientId,
     node: nodeEdit.name,
     location: nodeEdit.location
-  },() => {
+  }, () => {
     details.editNode = false
     updateDetails()
     ElMessage.success('节点信息已更新')
@@ -66,7 +66,8 @@ function deleteClient() {
       props.update()
       ElMessage.success('主机已成功移除')
     })
-  }).catch(() => {})
+  }).catch(() => {
+  })
 }
 
 function updateDetails() {
@@ -74,13 +75,13 @@ function updateDetails() {
   init(props.clientId)
 }
 
-const init = clientId =>{
-    if (clientId !== -1) {
-      details.base = {}
-      details.runtime = { list: [] }
-      get(`/monitor/details?clientId=${clientId}`, data => Object.assign(details.base, data))
-      get(`/monitor/runtime-history?clientId=${clientId}`, data => Object.assign(details.runtime, data))
-    }
+const init = clientId => {
+  if (clientId !== -1) {
+    details.base = {}
+    details.runtime = {list: []}
+    get(`/monitor/details?clientId=${clientId}`, data => Object.assign(details.base, data))
+    get(`/monitor/runtime-history?clientId=${clientId}`, data => Object.assign(details.runtime, data))
+  }
 }
 
 setInterval(() => {
@@ -111,9 +112,11 @@ watch(() => props.clientId, init, {immediate: true})
           </div>
           <div>
             <el-button :icon="Connection" type="primary"
-                       @click="emits('terminal', clientId)" plain text>SSH远程连接</el-button>
+                       @click="emits('terminal', clientId)" plain text>SSH远程连接
+            </el-button>
             <el-button :icon="Delete" type="danger" style="margin-left: 0"
-                          @click="deleteClient" plain text>删除此主机</el-button>
+                       @click="deleteClient" plain text>删除此主机
+            </el-button>
           </div>
         </div>
         <el-divider style="margin: 10px 0"/>
@@ -125,7 +128,8 @@ watch(() => props.clientId, init, {immediate: true})
           <div>
             <span>服务器名称</span>
             <span>{{ details.base.clientName }}</span>&nbsp;
-            <i class="fa-regular fa-pen-to-square interact-item" @click.stop="rename(details.base.clientId, details.base.clientName, updateDetails)"></i>
+            <i class="fa-regular fa-pen-to-square interact-item"
+               @click.stop="rename(details.base.clientId, details.base.clientName, updateDetails)"></i>
           </div>
           <div>
             <span>运行状态</span>
@@ -138,7 +142,7 @@ watch(() => props.clientId, init, {immediate: true})
           <div v-if="!details.editNode">
             <span>服务器节点</span>
             <span :class="`fi fi-${details.base.location}`"></span>&nbsp;
-            <span>{{details.base.node}}</span> &nbsp;
+            <span>{{ details.base.node }}</span> &nbsp;
             <i @click.stop="enableNodeEdit" class="fa-solid fa-pen-to-square interact-item"/>
           </div>
           <div v-else>
@@ -148,7 +152,7 @@ watch(() => props.clientId, init, {immediate: true})
                 <el-select v-model="nodeEdit.location" style="width: 80px" size="small">
                   <el-option v-for="item in locations" :value="item.name">
                     <span :class="`fi fi-${item.name}`"></span>&nbsp;
-                    {{item.desc}}
+                    {{ item.desc }}
                   </el-option>
                 </el-select>
                 <el-input v-model="nodeEdit.name" style="margin-left: 10px"
@@ -163,7 +167,8 @@ watch(() => props.clientId, init, {immediate: true})
             <span>公网 IP</span>
             <span>
             {{ details.base.clientAddress }}
-            <i class="fa-regular fa-copy interact-item" @click.stop="copyId(details.base)" style="color: dodgerblue"></i>
+            <i class="fa-regular fa-copy interact-item" @click.stop="copyId(details.base)"
+               style="color: dodgerblue"></i>
           </span>
           </div>
           <div>
@@ -174,33 +179,53 @@ watch(() => props.clientId, init, {immediate: true})
             <span>硬件配置信息</span>
             <span>
             <i class="fa-solid fa-microchip"></i>
-            {{details.base.cpuCores}} 核 CPU |
+            {{ details.base.cpuCores }} 核 CPU |
             <i class="fa-solid fa-memory"></i>
-            {{ details.base.osMemory?.toFixed(1) ?? '未知'}} GB 内存
+            {{ details.base.osMemory?.toFixed(1) ?? '未知' }} GB 内存
           </span>
           </div>
           <div>
             <span>操作系统</span>
-            <span> {{`${details.base.osName} ${details.base.osVersion}`}} </span>
+            <span> {{ `${details.base.osName} ${details.base.osVersion}` }} </span>
           </div>
         </div>
-        <div class="title">
-          <i class="fa-solid fa-gauge-high"></i>
-          实时监控信息
+        <div style="display: flex;justify-content: space-between">
+          <div class="title">
+            <i class="fa-solid fa-gauge-high"></i>
+            实时监控信息
+          </div>
+          <div style="font-size: 15px; font-weight: bold; margin-top: 4px; color: dodgerblue">
+            CPU报警阈值: <span style="color: black; font-size: 14px"> {{
+              (details.base.reportCpuUsage * 100).toFixed(1)
+            }}%</span>&nbsp;
+            内存报警阈值：<span style="color: black; font-size: 14px"> {{
+              (details.base.reportMemory * 100).toFixed(1)
+            }}%</span>&nbsp;
+            <i class="fa-regular fa-pen-to-square interact-item"
+               @click.stop="reportConfig(details.base.clientId, details.base.reportCpuUsage, details.base.reportMemory, updateDetails)"></i>
+          </div>
         </div>
         <el-divider style="margin: 10px 0"/>
         <div v-if="details.base.online" v-loading="!details.runtime.list.length"
              style="min-height: 200px">
           <div style="display: flex" v-if="details.runtime.list.length">
-            <el-progress type="dashboard" :width="100" :percentage="now.cpuUsage * 100" :status="percentageToStatus(now.cpuUsage * 100)">
+            <el-progress type="dashboard" :width="100" :percentage="now.cpuUsage * 100"
+                         :status="percentageToStatus(now.cpuUsage * 100)">
               <div style="font-size: 17px; font-weight: bold; color: initial">CPU</div>
-              <div style="font-size: 13px; color: grey; margin-top: 5px">{{(now.cpuUsage * 100)?.toFixed(1) ?? '未知'}}%</div>
+              <div style="font-size: 13px; color: grey; margin-top: 5px">
+                {{ (now.cpuUsage * 100)?.toFixed(1) ?? '未知' }}%
+              </div>
             </el-progress>
             <el-progress style="margin-left: 20px"
-                         type="dashboard" :width="100" :percentage="now.memoryUsage / details.base.osMemory * 100" :status="percentageToStatus(now.memoryUsage / details.base.osMemory * 100)">
+                         type="dashboard" :width="100" :percentage="now.memoryUsage / details.base.osMemory * 100"
+                         :status="percentageToStatus(now.memoryUsage / details.base.osMemory * 100)">
               <div style="font-size: 17px; font-weight: bold; color: initial">内存</div>
-              <div style="font-size: 13px; color: grey; margin-top: 5px">{{(now.memoryUsage)?.toFixed(1) ?? '未知'}}GB</div>
-              <div style="font-size: 13px; color: grey; margin-top: 5px">{{`${(now.memoryUsage / details.base.osMemory * 100)?.toFixed(1) ?? '未知'}`}}%</div>
+              <div style="font-size: 13px; color: grey; margin-top: 5px">
+                {{ (now.memoryUsage)?.toFixed(1) ?? '未知' }}GB
+              </div>
+              <div style="font-size: 13px; color: grey; margin-top: 5px">
+                {{ `${(now.memoryUsage / details.base.osMemory * 100)?.toFixed(1) ?? '未知'}` }}%
+              </div>
             </el-progress>
             <div style="flex: 1; margin-left: 30px; display: flex; flex-direction: column; height: 80px">
               <div style="flex: 1; font-size: 14px">
@@ -219,9 +244,12 @@ watch(() => props.clientId, init, {immediate: true})
                     <i class="fa-solid fa-hard-drive"></i>
                     <span>磁盘总容量</span>
                   </div>
-                  <div>{{now.diskUsage?.toFixed(1) ?? '未知'}} GB /  {{details.base.diskMemory?.toFixed(1) ?? '未知'}} GB</div>
+                  <div>{{ now.diskUsage?.toFixed(1) ?? '未知' }} GB /
+                    {{ details.base.diskMemory?.toFixed(1) ?? '未知' }} GB
+                  </div>
                 </div>
-                <el-progress type="line" :status="percentageToStatus(now.diskUsage / details.base.diskMemory)" :percentage="24" :show-text="false"/>
+                <el-progress type="line" :status="percentageToStatus(now.diskUsage / details.base.diskMemory)"
+                             :percentage="24" :show-text="false"/>
               </div>
             </div>
           </div>
@@ -235,35 +263,36 @@ watch(() => props.clientId, init, {immediate: true})
 
 <style scoped>
 
-.interact-item{
+.interact-item {
   transition: .3s;
-  &:hover{
+
+  &:hover {
     cursor: pointer;
     scale: 1.1;
     opacity: 0.8;
   }
 }
 
-.client-details{
+.client-details {
   height: 100%;
   padding: 20px;
   background: linear-gradient(145deg, #cacaca, #f0f0f0);
-  box-shadow:  20px 20px 60px #bebebe,
+  box-shadow: 20px 20px 60px #bebebe,
   -20px -20px 60px #ffffff;
 
-  .title{
+  .title {
     color: dodgerblue;
     font-size: 18px;
     font-weight: bold;
   }
 
-  .details-list{
+  .details-list {
     font-size: 14px;
 
-    & div{
+    & div {
       margin-bottom: 10px;
 
-      & span:first-child{
+      & span:first-child {
         color: gray;
         font-size: 13px;
         font-weight: normal;
@@ -271,7 +300,7 @@ watch(() => props.clientId, init, {immediate: true})
         display: inline-block;
       }
 
-      & span{
+      & span {
         font-weight: bold;
       }
     }

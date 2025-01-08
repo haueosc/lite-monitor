@@ -2,10 +2,7 @@ package com.example.controller;
 
 import com.example.entity.RestBean;
 import com.example.entity.dto.Account;
-import com.example.entity.vo.request.RenameClientVO;
-import com.example.entity.vo.request.RenameNodeVO;
-import com.example.entity.vo.request.RuntimeDetailVO;
-import com.example.entity.vo.request.SshConnectionVO;
+import com.example.entity.vo.request.*;
 import com.example.entity.vo.response.*;
 import com.example.service.AccountService;
 import com.example.service.ClientService;
@@ -58,6 +55,17 @@ public class MonitorController {
                                        @RequestAttribute(Const.ATTR_USER_ROLE) String role) {
         if (this.permissionCheck(uid, role, renameClientVO.getClientId())) {
             this.clientService.renameClient(renameClientVO);
+            return RestBean.success();
+        }
+        return RestBean.noPermission();
+    }
+
+    @PostMapping("/report")
+    public RestBean<Void> reportClient(@RequestBody @Valid ReportClientVO reportClientVO,
+                                        @RequestAttribute(Const.ATTR_USER_ID) int uid,
+                                        @RequestAttribute(Const.ATTR_USER_ROLE) String role) {
+        if (this.permissionCheck(uid, role, reportClientVO.getClientId())) {
+            this.clientService.updateReport(reportClientVO);
             return RestBean.success();
         }
         return RestBean.noPermission();

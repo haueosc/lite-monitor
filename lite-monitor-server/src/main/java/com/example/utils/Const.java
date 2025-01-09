@@ -2,6 +2,7 @@ package com.example.utils;
 
 /**
  * 一些常量字符串整合
+ * @author Doge2077
  */
 public final class Const {
     //JWT令牌
@@ -24,7 +25,11 @@ public final class Const {
     public final static String ATTR_CLIENT = "client";
     //消息队列
     public final static String MQ_MAIL = "mail";
+    public final static String MQ_REPORT = "report";
     //用户角色
     public final static String ROLE_ADMIN = "admin";
     public final static String ROLE_NORMAL = "user";
+
+    // 报警频率限制 KEY
+    public final static String REPORT_KEY = "report:client:";
 }

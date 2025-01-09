@@ -66,6 +66,11 @@ Supports multi-user management of different hosts:
 
 ****
 
+Redis Deployment:
+
+- Set port `6379`
+- Use the `0` database
+
 MySQL Deployment:
 
 - Set user `root`, password `monitormysqlroot`
@@ -81,6 +86,8 @@ InfluxDB Deployment:
 RabbitMQ Deployment:
 
 - Add user `admin`, password `monitorrabbitmqadmin`, virtual host `/`
+  - `rabbitmqadmin declare queue name=mail auto_delete=false durable=false --vhost`
+  - `rabbitmqadmin declare queue name=report auto_delete=false durable=false --vhost`
 
 Redis Deployment:
 

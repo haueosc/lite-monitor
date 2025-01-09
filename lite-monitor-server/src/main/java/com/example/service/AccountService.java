@@ -22,7 +22,7 @@ public interface AccountService extends IService<Account>, UserDetailsService {
     void deleteSubAccount(int uid);
     List<SubAccountVO> listSubAccount();
     /**
-     * 根据 clientId 获取拥有该主机权限的管理员邮箱（包含admin）
+     * 根据 clientId 获取拥有该主机权限的管理员信息（包含admin）
      */
-    List<String> getMailByClientId(int clientId);
+    List<Account> getMailByClientId(int clientId);
 }

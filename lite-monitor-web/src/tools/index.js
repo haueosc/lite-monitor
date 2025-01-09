@@ -40,20 +40,23 @@ function rename(clientId, clientName, after) {
     )
 }
 
-function reportConfig(clientId, reportMemory, reportCpuUsage, after) {
-    ElMessageBox.prompt('请输入新的内存报警阈值', '修改内存报警阈值', {
+function reportConfig(clientId, reportCpuUsage, reportMemory, after) {
+    // 先修改CPU报警阈值
+    ElMessageBox.prompt('请输入新的CPU报警阈值', '修改CPU报警阈值', {
         confirmButtonText: '下一步',
         cancelButtonText: '取消',
-        inputValue: reportMemory
-    }).then(({value: memoryValue}) => {
-        return ElMessageBox.prompt('请输入新的CPU报警阈值', '修改CPU报警阈值', {
+        inputValue: reportCpuUsage
+    }).then(({value: cpuValue}) => {
+        // 修改内存报警阈值
+        return ElMessageBox.prompt('请输入新的内存报警阈值', '修改内存报警阈值', {
             confirmButtonText: '确认',
             cancelButtonText: '取消',
-            inputValue: reportCpuUsage
-        }).then(({value: cpuValue}) => {
-            return {memoryValue, cpuValue}
+            inputValue: reportMemory
+        }).then(({value: memoryValue}) => {
+            return {cpuValue, memoryValue}
         })
-    }).then(({memoryValue, cpuValue}) => {
+    }).then(({cpuValue, memoryValue}) => {
+        // 提交更新的报警阈值
         post('/monitor/report', {
             clientId: clientId,
             reportMemory: memoryValue,

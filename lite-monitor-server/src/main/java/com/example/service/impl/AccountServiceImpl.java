@@ -179,13 +179,14 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
-    public List<String> getMailByClientId(int clientId) {
+    public List<Account> getMailByClientId(int clientId) {
         LambdaQueryWrapper<Account> wrapper = Wrappers.<Account>lambdaQuery()
                 .eq(Account::getRole, "admin")
                 .or()
-                .inSql(Account::getClients, "JSON_CONTAINS(clients, '" + clientId + "')");
-        return this.list(wrapper).stream().map(Account::getEmail).collect(Collectors.toList());
+                .apply("JSON_CONTAINS(db_account.clients, JSON_ARRAY({0}))", clientId);
+        return this.list(wrapper);
     }
+
 
     /**
      * 移除Redis中存储的邮件验证码

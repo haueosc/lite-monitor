@@ -9,7 +9,7 @@ import {createPinia} from "pinia";
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 // axios.defaults.baseURL = '/api'
-axios.defaults.baseURL = 'http://localhost:8080/api'
+axios.defaults.baseURL = 'http://127.0.0.1:8080/api'
 
 
 const app = createApp(App)

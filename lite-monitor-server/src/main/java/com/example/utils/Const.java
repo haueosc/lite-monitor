@@ -31,5 +31,5 @@ public final class Const {
     public final static String ROLE_NORMAL = "user";
 
     // 报警频率限制 KEY
-    public final static String REPORT_KEY = "report:client:";
+    public final static String REPORT_KEY = "report:client:break:";
 }

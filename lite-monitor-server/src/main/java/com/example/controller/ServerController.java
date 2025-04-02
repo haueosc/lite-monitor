@@ -8,11 +8,13 @@ import com.example.service.ClientService;
 import com.example.utils.Const;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/monitor")
+@Slf4j
 public class ServerController {
 
     @Resource
@@ -36,6 +38,7 @@ public class ServerController {
     @PostMapping("/runtime")
     public RestBean<Void> updateRuntimeDetails(@RequestAttribute(Const.ATTR_CLIENT) Client client,
                                                @RequestBody @Valid RuntimeDetailVO runtimeDetailVO) {
+        log.info(client.toString());
         Boolean success = this.clientService.updateRuntimeDetail(runtimeDetailVO, client);
         return success ? RestBean.success() : RestBean.failure(404, "数据非法，请联系管理员");
     }

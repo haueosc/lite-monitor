@@ -49,6 +49,7 @@
     </dependencies>
 
     <build>
+        <finalName>client</finalName>
         <plugins>
             <!-- Maven 打包跳过测试 -->
             <plugin>
@@ -87,5 +88,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

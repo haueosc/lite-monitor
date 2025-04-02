@@ -18,7 +18,7 @@ spring:
     user: admin
     password: 023017lys
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/lite-monitor-db
+    url: jdbc:mysql://192.168.75.217:3306/lite-monitor-db
     username: root
     password: monitormysqlroot
     driver-class-name: com.mysql.cj.jdbc.Driver

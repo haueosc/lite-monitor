@@ -85,8 +85,8 @@
 
 - 添加用户 `admin`，密码 `monitorrabbitmqadmin`，虚拟主机 `/`
 - 在 vhost / 下创建队列：mail 和 report
-  - `rabbitmqadmin declare queue name=mail auto_delete=false durable=false --vhost`
-  - `rabbitmqadmin declare queue name=report auto_delete=false durable=false --vhost`
+  - `rabbitmqadmin declare queue name=mail auto_delete=false durable=true --vhost /`
+  - `rabbitmqadmin declare queue name=report auto_delete=false durable=true --vhost /`
   
 
 部署 Redis：
